@@ -101,6 +101,8 @@ end
 
 --- Функция вызывается терминалом QUIK при в таблице заявок.
 function OnOrder(order)
+    --очищаем комментарий
+    if order.brokerref:len()>0 then order.brokerref="" end	
     local msg = {}
     msg.t = timemsec()
     msg.id = nil -- значение в order.trans_id
@@ -148,6 +150,8 @@ end
 
 --- Функция вызывается терминалом QUIK при получении сделки.
 function OnTrade(trade)
+    --очищаем комментарий
+    if trade.brokerref:len()>0 then trade.brokerref="" end
     local msg = {}
     msg.t = timemsec()
     msg.id = nil -- значение в OnTrade.trans_id
