@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
-using Newtonsoft.Json;
-using QuikSharp.DataStructures;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace QuikSharp.DataStructures
 {
@@ -12,7 +10,7 @@ namespace QuikSharp.DataStructures
     public class StopOrder
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [JsonProperty("lua_timestamp")]
         public long LuaTimeStamp { get; internal set; }
@@ -22,6 +20,22 @@ namespace QuikSharp.DataStructures
         /// </summary>
         [JsonProperty("order_num")]
         public long OrderNum { get; set; }
+
+        private int _flags;
+
+        /// <summary>
+        /// Набор битовых флагов.
+        /// </summary>
+        [JsonProperty("flags")]
+        public int Flags
+        {
+            get { return _flags; }
+            set
+            {
+                _flags = value;
+                ParseFlags(value);
+            }
+        }
 
         /// <summary>
         /// Идентификатор транзакции.
@@ -54,6 +68,7 @@ namespace QuikSharp.DataStructures
         public string ClassCode { get; set; }
 
         private int _stopOrderTypeInt;
+
         [JsonProperty("stop_order_type")]
         public int StopOrderTypeInt
         {
@@ -72,11 +87,12 @@ namespace QuikSharp.DataStructures
         public StopOrderType StopOrderType { get; set; }
 
         private int _conditionInt;
+
         [JsonProperty("condition")]
         public int ConditionInt
         {
-            get{return _conditionInt;}
-            set 
+            get { return _conditionInt; }
+            set
             {
                 _conditionInt = value;
                 Condition = GetCondition(value);
@@ -125,21 +141,6 @@ namespace QuikSharp.DataStructures
         [JsonProperty("linkedorder")]
         public long LinkedOrder { get; set; }
 
-        private int _flags;
-        /// <summary>
-        /// Набор битовых флагов.
-        /// </summary>
-        [JsonProperty("flags")]
-        public int Flags
-        {
-            get { return _flags; }
-            set
-            {
-                _flags = value;
-                ParseFlags(value);
-            }
-        }
-
         /// <summary>
         /// Заявка на продажу, иначе – на покупку.
         /// </summary>
@@ -162,7 +163,7 @@ namespace QuikSharp.DataStructures
         {
             //Based on: http://help.qlua.org/ch9_2.htm
 
-            if((flags & 0x1) != 0)
+            if ((flags & 0x1) != 0)
                 State = State.Active;
             else if ((flags & 0x2) != 0)
                 State = State.Canceled;
@@ -179,8 +180,10 @@ namespace QuikSharp.DataStructures
             {
                 case 1:
                     return StopOrderType.StopLimit;
+
                 case 6:
                     return StopOrderType.TakeProfit;
+
                 default:
                     return StopOrderType.NotImplemented;
             }
@@ -192,8 +195,10 @@ namespace QuikSharp.DataStructures
             {
                 case 4:
                     return Condition.LessOrEqual;
+
                 case 5:
                     return Condition.MoreOrEqual;
+
                 default:
                     throw new Exception("Not supported code: " + code);
             }
@@ -211,9 +216,9 @@ namespace QuikSharp.DataStructures
 
         //«2» – условие по другому инструменту,
         //«3» – со связанной заявкой,
-        
+
         /// <summary>
-        ///«6» – тейк-профит 
+        ///«6» – тейк-профит
         /// </summary>
         TakeProfit
 
@@ -228,12 +233,12 @@ namespace QuikSharp.DataStructures
     public enum Condition
     {
         /// <summary>
-        /// «4» – <=
+        /// «4» – меньше или равно
         /// </summary>
         LessOrEqual,
 
         /// <summary>
-        /// «5» – >=
+        /// «5» – больше или равно
         /// </summary>
         MoreOrEqual
     }
